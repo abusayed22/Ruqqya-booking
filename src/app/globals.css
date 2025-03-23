@@ -1,4 +1,40 @@
-:root {
+
+@import url("../../public/assets/css/remixicon.css");
+@import url("../../public/assets/css/lib/bootstrap.min.css");
+@import url("../../public/assets/css/lib/apexcharts.css");
+@import url("../../public/assets/css/lib/dataTables.min.css");
+@import url("../../public/assets/css/lib/dataTables.min.css");
+@import url("../../public/assets/css/style.css");
+@import url("../../public/assets/css/extra.css");
+
+
+
+.react-datepicker-wrapper {
+  width: 100% !important;
+}
+
+.datePicker {
+  width: 100% !important;
+}
+.custom-time-input{
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background-color: var(--primary-50);
+  color: var(--primary-600) !important;
+}
+.custom-time-input[type="time"]::-webkit-inner-spin-button {
+  display: none;
+}
+.custom-time-input[type="time"]:hover {
+  border-color: #0056b3;
+}
+
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -39,4 +75,4 @@ a {
   html {
     color-scheme: dark;
   }
-}
+} */
