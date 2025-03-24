@@ -34,7 +34,16 @@
   border-color: #0056b3;
 }
 
-
+/* In your global CSS (e.g., globals.css) */
+@media (max-width: 767px) {
+  .modal-dialog {
+    max-height: 90vh;
+  }
+  .modal-body {
+    overflow-y: auto;
+    max-height: 70vh;  /* Adjust max-height for small screens */
+  }
+}
 
 
 

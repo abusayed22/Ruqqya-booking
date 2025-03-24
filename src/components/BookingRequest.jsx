@@ -1,7 +1,8 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import React from "react";
+import { Modal } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 
 const BookingRequest = () => {
   const bookingData = [
@@ -51,6 +52,22 @@ const BookingRequest = () => {
         "Sarah has encountered multiple issues with her recent order, including receiving incomplete items and missing parts for a product. She has had to spend considerable time trying to get the issue resolved. Sarah has requested either the missing items be shipped urgently or a full refund for the incomplete order, along with a formal apology for the inconvenience.",
     },
   ];
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  // useEffect(() => {
+  //   if (show) {
+  //     document.body.style.overflow = 'hidden';
+  //   } else {
+  //     document.body.style.overflow = 'auto';
+  //   }
+
+  //   return () => {
+  //     document.body.style.overflow = 'auto'; // Clean up on unmount
+  //   };
+  // }, [show]);
 
   return (
     <div className="card p-5">
@@ -108,10 +125,11 @@ const BookingRequest = () => {
                   </td>
                   <td className="text-center">
                     <button
-                      type="button"
+                      // type="button"
                       className="bg-warning-focus text-warning-main px-24 py-4 rounded-pill fw-medium text-sm"
-                      data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
+                      // data-bs-toggle="modal"
+                      // data-bs-target="#exampleModal"
+                      onClick={handleShow}
                     >
                       <Icon
                         icon="ph:read-cv-logo"
@@ -119,37 +137,28 @@ const BookingRequest = () => {
                       ></Icon>
                     </button>
                     {/* Modal Add Event */}
-                    <div
-                      className="modal fade"
-                      id="exampleModal"
-                      tabIndex={-1}
+                    <Modal
+                      show={show}
+                      onHide={handleClose}
+                      centered
+                      size="lg"
+                      dialogClassName="modal-dialog-centered"
+                      contentClassName="modal-content radius-16 bg-base"
                       aria-labelledby="exampleModalLabel"
-                      aria-hidden="true"
                     >
-                      <div className="modal-dialog modal-lg modal-dialog modal-dialog-centered">
-                        <div className="modal-content radius-16 bg-base">
-                          <div className="modal-header py-16 px-24 border border-top-0 border-start-0 border-end-0">
-                            <h1
-                              className="modal-title fs-5"
-                              id="exampleModalLabel"
-                            >
-                              Problem
-                            </h1>
-                            <button
-                              type="button"
-                              className="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            />
-                          </div>
-                          <div className="modal-body p-24">
-                            <h6 className="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">
-                              {customerproblem}
-                            </h6>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                      <Modal.Header closeButton>
+                        <Modal.Title id="exampleModalLabel">
+                          Problem
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body
+                        style={{ overflowY: "auto", maxHeight: "80vh" }}
+                      >
+                        <h6 className="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">
+                          {customerproblem}
+                        </h6>
+                      </Modal.Body>
+                    </Modal>
                   </td>
                   <td className="text-center">
                     <div className="d-flex justify-content-center gap-2">
