@@ -141,7 +141,7 @@ const BookingRequest = () => {
                       show={show}
                       onHide={handleClose}
                       centered
-                      size="lg"
+                      size="xl"
                       dialogClassName="modal-dialog-centered"
                       contentClassName="modal-content radius-16 bg-base"
                       aria-labelledby="exampleModalLabel"
@@ -154,9 +154,9 @@ const BookingRequest = () => {
                       <Modal.Body
                         style={{ overflowY: "auto", maxHeight: "80vh" }}
                       >
-                        <h6 className="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">
+                        {/* <h6 className="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">
                           {customerproblem}
-                        </h6>
+                        </h6> */}
                       </Modal.Body>
                     </Modal>
                   </td>
