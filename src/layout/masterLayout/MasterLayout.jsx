@@ -89,9 +89,9 @@ const MasterLayout = ({ children }) => {
   let mobileMenuControl = () => {
     setMobileMenu(!mobileMenu);
   };
-  console.log(pathname);
+  
   return (
-    <section className={mobileMenu ? "overlay active" : "overlay "}>
+    <section className={mobileMenu ? "overlay active" : "overlay "} onClick={mobileMenu ? mobileMenuControl : null}>
       {/* sidebar */}
       <aside
         className={
@@ -101,7 +101,7 @@ const MasterLayout = ({ children }) => {
             ? "sidebar sidebar-open"
             : "sidebar"
         }
-      >
+        >
         <button
           onClick={mobileMenuControl}
           type="button"
