@@ -54,7 +54,7 @@ const BookingRequest = () => {
 
   return (
     <div className="card p-5">
-      <b className="card-header">Booking Request</b>
+      <b className="py-1">Booking Request</b>
       <div className="table-responsive scroll-sm">
         <table className="table bordered-table sm-table mb-0">
           <thead>
@@ -143,7 +143,9 @@ const BookingRequest = () => {
                             />
                           </div>
                           <div className="modal-body p-24">
-                            <h6 class="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">{customerproblem}</h6>
+                            <h6 className="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">
+                              {customerproblem}
+                            </h6>
                           </div>
                         </div>
                       </div>
