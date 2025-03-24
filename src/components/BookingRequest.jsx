@@ -57,17 +57,17 @@ const BookingRequest = () => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  // useEffect(() => {
-  //   if (show) {
-  //     document.body.style.overflow = 'hidden';
-  //   } else {
-  //     document.body.style.overflow = 'auto';
-  //   }
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
 
-  //   return () => {
-  //     document.body.style.overflow = 'auto'; // Clean up on unmount
-  //   };
-  // }, [show]);
+    return () => {
+      document.body.style.overflow = 'auto'; // Clean up on unmount
+    };
+  }, [show]);
 
   return (
     <div className="card p-5">
