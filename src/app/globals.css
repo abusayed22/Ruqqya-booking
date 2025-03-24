@@ -35,63 +35,6 @@
 }
 
 
-/* ----------------- modal ---------------- */
-/* Default modal styles for larger screens */
-/* .modal-dialog {
-  max-width: 60%;
-} */
-
-/* Modal adjustments for smaller screens */
-@media screen and (max-width: 768px) {
-  .modal-dialog {
-    margin: 10px; 
-    max-width: 100%; 
-    width: 90%; 
-  }
-
-  .modal-content {
-    border-radius: 12px;
-  }
-
-  .modal-header {
-    padding: 12px 16px; 
-  }
-
-  .modal-title {
-    font-size: 18px;
-  }
-
-  .modal-body {
-    padding: 16px;
-  }
-
-  .text-primary-light {
-    font-size: 14px; 
-  }
-
-  .btn-close {
-    font-size: 18px; 
-  }
-}
-
-@media screen and (max-width: 480px) {
-  /* modal fade show */
-
-  
-  .modal-dialog {
-    max-width: 95%; 
-  }
-
-  .modal-title {
-    font-size: 16px; 
-  }
-
-  .modal-body h6 {
-    font-size: 14px; 
-  }
-}
-
-
 
 
 
