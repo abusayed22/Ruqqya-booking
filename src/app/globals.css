@@ -39,8 +39,8 @@
 /* In your global CSS (e.g., globals.css) */
 /* Adjusting Modal Dialog for Responsive Design */
 .modal-dialog {
-  max-width: 100%;   /* Ensure modal doesn't overflow the screen */
-  width: 90vw;       /* Make modal smaller on mobile screens */
+  /* max-width: 100%;   Ensure modal doesn't overflow the screen */
+  /* width: 90vw;       Make modal smaller on mobile screens */
   margin: 0 auto;    /* Center the modal */
 }
 
