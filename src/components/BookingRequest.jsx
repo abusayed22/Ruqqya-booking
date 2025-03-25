@@ -149,9 +149,9 @@ const BookingRequest = () => {
                             />
                           </div>
                           <div className="modal-body">
-                            <h6 className="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">
+                            {/* <h6 className="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">
                               {customerproblem}
-                            </h6>
+                            </h6> */}
                           </div>
                         </div>
                       </div>
