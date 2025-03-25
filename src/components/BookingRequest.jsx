@@ -124,38 +124,6 @@ const BookingRequest = () => {
                         className="icon text-lg line-height-1"
                       ></Icon>
                     </button>
-                    {/* Modal Add Event */}
-                    <div
-                      className="modal fade"
-                      id="exampleModal"
-                      tabIndex={-1}
-                      aria-labelledby="exampleModalLabel"
-                      aria-hidden="true"
-                    >
-                      <div className="modal-dialog modal-lg modal-dialog modal-dialog-centered overflow-hidden">
-                        <div className="modal-content radius-16 bg-base">
-                          <div className="modal-header py-16 px-24 border border-top-0 border-start-0 border-end-0">
-                            <h1
-                              className="modal-title fs-5"
-                              id="exampleModalLabel"
-                            >
-                              Problem
-                            </h1>
-                            <button
-                              type="button"
-                              className="btn-close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            />
-                          </div>
-                          <div className="modal-body">
-                            {/* <h6 className="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">
-                              {customerproblem}
-                            </h6> */}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </td>
                   <td className="text-center">
                     <div className="d-flex justify-content-center gap-2">
@@ -172,6 +140,41 @@ const BookingRequest = () => {
             )}
           </tbody>
         </table>
+      </div>
+      {/* Modal Add Event */}
+      <div
+        className="modal fade"
+        id="exampleModal"
+        tabIndex={-1}
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-lg modal-dialog modal-dialog-centered overflow-hidden">
+          <div className="modal-content radius-16 bg-base">
+            <div className="modal-header py-16 px-24 border border-top-0 border-start-0 border-end-0">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">
+                Problem
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              />
+            </div>
+            <div className="modal-body">
+              <h6 className="text-primary-light text-justify fw-semibold text-md mb-0 mt-4">
+                This customer has reported multiple delivery issues over the
+                past month. The items were either delayed or damaged upon
+                arrival. There has also been some miscommunication with the
+                customer service team regarding follow-up procedures. The
+                customer has requested better communication and a follow-up on
+                the issue. The most recent complaint was about a delayed package
+                which caused significant inconvenience.
+              </h6>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
