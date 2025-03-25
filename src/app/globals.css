@@ -36,35 +36,41 @@
 
 
 
-/* In your global CSS (e.g., globals.css) */
-/* Adjusting Modal Dialog for Responsive Design */
-.modal-dialog {
-  /* max-width: 100%;   Ensure modal doesn't overflow the screen */
-  /* width: 90vw;       Make modal smaller on mobile screens */
-  margin: 0 auto;    /* Center the modal */
+
+/* .modal-dialog {
+  max-width: 100%; 
+  width: 90vw;    
+  margin: 0 auto;   
+} */
+
+.modal-body-test{
+  /* padding: 1rem;   */
+}
+.text-justify {
+  text-align: justify;
 }
 
-.modal-body {
-  padding: 1rem;      /* Ensure proper padding on small devices */
-  max-height: 70vh;   /* Restrict modal body height on small screens */
-  overflow-y: auto;   /* Allow scrolling within the modal body */
-}
+/* .modal-body {
+  padding: 1rem;     
+  max-height: 70vh; 
+  overflow-y: auto;  
+} */
 
 /* Specific Breakpoint for Mobile Screens */
-@media (max-width: 767px) {
+/* @media (max-width: 767px) {
   .modal-dialog {
-    width: 90%;  /* Make the modal width smaller on mobile */
+    width: 90%; 
   }
 
   .modal-body {
-    max-height: 60vh;  /* Allow more space on small devices */
-    padding: 16px;     /* Adjust padding for mobile screens */
+    max-height: 60vh; 
+    padding: 16px; 
   }
 
   .text-md {
-    font-size: 14px;    /* Adjust font size for mobile */
+    font-size: 14px; 
   }
-}
+} */
 
 
 

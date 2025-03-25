@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { Modal } from 'react-bootstrap'; 
+import { Modal } from "react-bootstrap";
 import React, { useState } from "react";
 
 const BookingRequest = () => {
@@ -148,11 +148,16 @@ const BookingRequest = () => {
                               aria-label="Close"
                             />
                           </div>
-                          <div className="modal-body ">
+                          <div className="modal-body-test">
+                            <p className="text-primary-light p-1 fw-semibold text-md mb-0 mt-4">
+                              {customerproblem}
+                            </p>
+                          </div>
+                          {/* <div className="modal-body">
                             <h6 className="text-primary-light fw-semibold text-md mb-0 mt-4">
                               {customerproblem}
                             </h6>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </div>
