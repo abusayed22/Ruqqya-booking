@@ -148,11 +148,11 @@ const BookingRequest = () => {
                               aria-label="Close"
                             />
                           </div>
-                          <div className="modal-body-test">
+                          {/* <div className="modal-body-test">
                             <p className="text-primary-light p-1 fw-semibold text-md mb-0 mt-4">
                               {customerproblem}
                             </p>
-                          </div>
+                          </div> */}
                           {/* <div className="modal-body">
                             <h6 className="text-primary-light fw-semibold text-md mb-0 mt-4">
                               {customerproblem}
