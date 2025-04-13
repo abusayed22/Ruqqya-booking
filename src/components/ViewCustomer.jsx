@@ -1,99 +1,120 @@
 "use client";
 
+import {
+  customerProfileData,
+  singleDataFethcing,
+} from "@/lib/user/actions/viewProfile";
 import { Icon } from "@iconify/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Pagination from "./child/Pagination";
+import ProfileInfoCom from "./ProfileInfoCom";
+import Loading from "./child/Loading";
+import { useRouter } from "next/router";
 
-const ViewCustomer = () => {
-  const profileInfo = {
-    name: "Sayed",
-    email: "sayed@gmail.com",
-    password: "1234",
-    profileImg: "/assets/images/user-grid/user-grid-img13.png",
-    phone: "01918181814",
-    address: "Mughda, Dhaka",
+const ViewCustomer = ({ customerId, personalInfo,user }) => {
+  // data
+  const [profileData, setProfileData] = useState(null);
+  const [ruqyyaCompletedData, setRuqyyaCompletedData] = useState([]);
+  const [hizamaCompletedData, setHizamaCompletedData] = useState([]);
+  const [ruqyyaPendingData, setRuqyyaPendingData] = useState([]);
+  const [hizamaPendingData, setHizamaPendingData] = useState([]);
+  const [ruqyyaRejectedData, setRuqyyaRejectedData] = useState([]);
+  const [hizamaRejectedData, setHizamaRejectedData] = useState([]);
+
+  // Pagination
+  const [ruqyyaCompletedPage, setRuqyyaCompletedPage] = useState(1);
+  const [hizamaCompletedPage, setHizamaCompletedPage] = useState(1);
+  const [ruqyyaPendingPage, setRuqyyaPendingPage] = useState(1);
+  const [hizamaPendingPage, setHizamaPendingPage] = useState(1);
+  const [ruqyyaRejectedPage, setRuqyyaRejectedPage] = useState(1);
+  const [hizamaRejectedPage, setHizamaRejectedPage] = useState(1);
+
+  // loading
+  const [profileDataLoading, setProfileDataLoading] = useState(true);
+  const [ruqyyaCompletedLoading, setRuqyyaCompletedLoading] = useState(false);
+  const [hizamaCompletedLoading, setHizamaCompletedLoading] = useState(false);
+  const [ruqyyaPendingLoading, setRuqyyaPendingLoading] = useState(false);
+  const [hizamaPendingLoading, setHizamaPendingLoading] = useState(false);
+  const [ruqyyaRejectedLoading, setRuqyyaRejectedLoading] = useState(false);
+  const [hizamaRejectedLoading, setHizamaRejectedLoading] = useState(false);
+
+  // Function to fetch data
+  const fetchData = async (category, page) => {
+
+    try {
+      const data = await singleDataFethcing(customerId, category, page);
+      switch (category) {
+        case "RuqyyaCompleted":
+          setRuqyyaCompletedData(data);
+          break;
+        case "HizamaCompleted":
+          setHizamaCompletedData(data);
+          break;
+        case "RuqyyaPending":
+          setRuqyyaPendingData(data);
+          break;
+        case "HizamaPending":
+          setHizamaPendingData(data);
+          break;
+        case "RuqyyaRejected":
+          setRuqyyaRejectedData(data);
+          break;
+        case "HizamaRejected":
+          setHizamaRejectedData(data);
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.log("profile data fetching error", error);
+    } 
   };
 
-  const [imagePreview, setImagePreview] = useState(
-    "/assets/images/user-grid/user-grid-img13.png"
-  );
+  // Pagination data fetching
+  useEffect(() => {
+    setRuqyyaCompletedLoading(true);
+    fetchData("RuqyyaCompleted", ruqyyaCompletedPage);
+    setRuqyyaCompletedLoading(false);
+  }, [ruqyyaCompletedPage]);
 
-  const readURL = (input) => {
-    if (input.target.files && input.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target.result);
-      };
-      reader.readAsDataURL(input.target.files[0]);
-    }
-  };
+  useEffect(() => {
+    setHizamaCompletedLoading(true);
+    fetchData("HizamaCompleted", hizamaCompletedPage);
+    setHizamaCompletedLoading(false);
+  }, [hizamaCompletedPage]);
+
+  useEffect(() => {
+    setRuqyyaPendingLoading(true);
+    fetchData("RuqyyaPending", ruqyyaPendingPage);
+    setRuqyyaPendingLoading(false);
+  }, [ruqyyaPendingPage]);
+
+  useEffect(() => {
+    setHizamaPendingLoading(true);
+    fetchData("HizamaPending", hizamaPendingPage);
+    setHizamaPendingLoading(false);
+  }, [hizamaPendingPage]);
+
+  useEffect(() => {
+    setRuqyyaRejectedLoading(true);
+    fetchData("RuqyyaRejected", ruqyyaRejectedPage);
+    setRuqyyaRejectedLoading(false);
+  }, [ruqyyaRejectedPage]);
+
+  useEffect(() => {
+    setHizamaRejectedLoading(true);
+    fetchData("HizamaRejected", hizamaRejectedPage);
+    setHizamaRejectedLoading(false);
+  }, [hizamaRejectedPage]);
 
   return (
     <div>
-      <div className="row gy-4">
-        <div className="col-lg-4">
-          <div className="user-grid-card position-relative border radius-16 overflow-hidden bg-base h-100">
-            <img
-              src="/assets/images/user-grid/user-grid-bg1.png"
-              alt=""
-              className="w-100 object-fit-cover"
-            />
-            <div className="pb-24 ms-16 mb-24 me-16  mt--100">
-              <div className="text-center border border-top-0 border-start-0 border-end-0">
-                <img
-                  src="/assets/images/user-grid/user-grid-img14.png"
-                  alt=""
-                  className="border br-white border-width-2-px w-200-px h-200-px rounded-circle object-fit-cover"
-                />
-                <h6 className="mb-0 mt-16">{profileInfo.name}</h6>
-                <span className="text-secondary-light mb-16">
-                  {profileInfo.email}
-                </span>
-              </div>
-              <div className="mt-24">
-                <h6 className="text-xl mb-16">Personal Info</h6>
-                <ul>
-                  <li className="d-flex align-items-center gap-1 mb-12">
-                    <span className="w-30 text-md fw-semibold text-primary-light">
-                      Full Name
-                    </span>
-                    <span className="w-70 text-secondary-light fw-medium">
-                      : {profileInfo.name}
-                    </span>
-                  </li>
-                  <li className="d-flex align-items-center gap-1 mb-12">
-                    <span className="w-30 text-md fw-semibold text-primary-light">
-                      {" "}
-                      Email
-                    </span>
-                    <span className="w-70 text-secondary-light fw-medium">
-                      : {profileInfo.email}
-                    </span>
-                  </li>
-                  <li className="d-flex align-items-center gap-1 mb-12">
-                    <span className="w-30 text-md fw-semibold text-primary-light">
-                      {" "}
-                      Phone Number
-                    </span>
-                    <span className="w-70 text-secondary-light fw-medium">
-                      : {profileInfo.phone}
-                    </span>
-                  </li>
+      <div className="row gy-4 ">
+        <ProfileInfoCom personalInfo={personalInfo} />
 
-                  <li className="d-flex align-items-center gap-1 mb-12">
-                    <span className="w-30 text-md fw-semibold text-primary-light">
-                      {" "}
-                      Address
-                    </span>
-                    <span className="w-70 text-secondary-light fw-medium">
-                      : {profileInfo.address}
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-8">
+        {
+          user.role === "user" || user.id !== customerId &&  (
+            <div className="col-lg-8">
           <div className="card h-100">
             <div className="card-body p-24">
               <ul
@@ -154,68 +175,99 @@ const ViewCustomer = () => {
                   aria-labelledby="pills-edit-profile-tab"
                   tabIndex={0}
                 >
-                  <h6 className="text-md text-primary-light mb-16">
-                    Completed
-                  </h6>
-                  {/* Upload Image Start */}
-                  <div className="mb-24 mt-16">
-                    <table className="table bordered-table sm-table mb-0">
-                      <thead>
-                        <tr>
-                          <th scope="col">Customer</th>
-                          <th scope="col">Date</th>
-                          <th scope="col">Time</th>
-                          <th scope="col">Number</th>
-                          <th scope="col">Address</th>
-                          <th scope="col" className="text-center">
-                            Status
-                          </th>
-                          <th scope="col" className="text-center">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div className="d-flex align-items-center">
-                              <img
-                                src="/assets/images/users/user1.png"
-                                alt=""
-                                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"
+                  <div>
+                    <div>
+                      <h6 className="text-md text-primary-light mb-16">
+                        Ruqyya
+                      </h6>
+                      {ruqyyaCompletedLoading ? (
+                        <Loading />
+                      ) : (
+                        <div className="mb-24 mt-16">
+                          {ruqyyaCompletedData?.data?.length > 0 ? (
+                            <div className="table-responsive scroll-sm">
+                              <table className="table bordered-table sm-table mb-0">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Time</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {ruqyyaCompletedData?.data?.map(
+                                    ({ id, slottime, requestdate }) => (
+                                      <tr key={id}>
+                                        <td>
+                                          {
+                                            new Date(requestdate)
+                                              .toISOString()
+                                              .split("T")[0]
+                                          }
+                                        </td>
+                                        <td>{slottime}</td>
+                                      </tr>
+                                    )
+                                  )}
+                                </tbody>
+                              </table>
+                              <Pagination
+                                page={ruqyyaCompletedPage}
+                                setPage={setRuqyyaCompletedPage}
+                                totalPage={ruqyyaCompletedData?.count}
                               />
-                              <div className="flex-grow-1">
-                                <h6 className="text-md mb-0 fw-medium">
-                                  Dianne Russell
-                                </h6>
-                                <span className="text-sm text-secondary-light fw-medium">
-                                  redaniel@gmail.com
-                                </span>
-                              </div>
                             </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>10:00 AM</td>
-                          <td>+11 019453-9485398</td>
-                          <td>Dhaka</td>
-                          <td className="text-center">
-                            <span className="bg-success-focus text-success-main px-24 py-4 rounded-pill fw-medium text-sm">
-                              Pending
-                            </span>
-                          </td>
-                          <td className="text-center">
-                            <div className="d-flex justify-content-center gap-2">
-                              <div className="w-32-px cursor-pointer h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                                <Icon icon="mdi:tick"></Icon>
-                              </div>
-                              <div className="w-32-px cursor-pointer h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                                <Icon icon="maki:cross"></Icon>
-                              </div>
+                          ) : (
+                            <p className="">No Ruqyya </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-12">
+                      <h6 className="text-md text-primary-light mb-16">
+                        Hizama
+                      </h6>
+                      {hizamaCompletedLoading ? (
+                        <Loading />
+                      ) : (
+                        <div className="mb-24 mt-16">
+                          {hizamaCompletedData?.data?.length > 0 ? (
+                            <div className="table-responsive scroll-sm">
+                              <table className="table bordered-table sm-table mb-0">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Time</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {hizamaCompletedData?.data?.map(
+                                    ({ id, slottime, requestdate }) => (
+                                      <tr key={id}>
+                                        <td>
+                                          {
+                                            new Date(requestdate)
+                                              .toISOString()
+                                              .split("T")[0]
+                                          }
+                                        </td>
+                                        <td>{slottime}</td>
+                                      </tr>
+                                    )
+                                  )}
+                                </tbody>
+                              </table>
+                              <Pagination
+                                page={hizamaCompletedPage}
+                                setPage={setHizamaCompletedPage}
+                                totalPage={hizamaCompletedData?.count}
+                              />
                             </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                          ) : (
+                            <p className="">No Hizama </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div
@@ -226,66 +278,100 @@ const ViewCustomer = () => {
                   tabIndex="0"
                 >
                   <div className="table-responsive scroll-sm">
-                    <h6 className="text-md text-primary-light mb-16">
-                      Pending
-                    </h6>
-                    <table className="table bordered-table sm-table mb-0">
-                      <thead>
-                        <tr>
-                          <th scope="col">Customer</th>
-                          <th scope="col">Date</th>
-                          <th scope="col">Time</th>
-                          <th scope="col">Number</th>
-                          <th scope="col">Address</th>
-                          <th scope="col" className="text-center">
-                            Status
-                          </th>
-                          <th scope="col" className="text-center">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div className="d-flex align-items-center">
-                              <img
-                                src="/assets/images/users/user1.png"
-                                alt=""
-                                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"
-                              />
-                              <div className="flex-grow-1">
-                                <h6 className="text-md mb-0 fw-medium">
-                                  Dianne Russell
-                                </h6>
-                                <span className="text-sm text-secondary-light fw-medium">
-                                  redaniel@gmail.com
-                                </span>
+                    <div>
+                      <div>
+                        <h6 className="text-md text-primary-light mb-16">
+                          Ruqyya
+                        </h6>
+                        {ruqyyaPendingLoading ? (
+                          <Loading />
+                        ) : (
+                          <div className="mb-24 mt-16">
+                            {ruqyyaPendingData?.data?.length > 0 ? (
+                              <div className="table-responsive scroll-sm">
+                                <table className="table bordered-table sm-table mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Date</th>
+                                      <th scope="col">Time</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {ruqyyaPendingData?.data?.map(
+                                      ({ id, slottime, requestdate }) => (
+                                        <tr key={id}>
+                                          <td>
+                                            {
+                                              new Date(requestdate)
+                                                .toISOString()
+                                                .split("T")[0]
+                                            }
+                                          </td>
+                                          <td>{slottime}</td>
+                                        </tr>
+                                      )
+                                    )}
+                                  </tbody>
+                                </table>
+                                <Pagination
+                                  page={ruqyyaPendingPage}
+                                  setPage={setRuqyyaPendingPage}
+                                  totalPage={ruqyyaPendingData?.count}
+                                />
                               </div>
-                            </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>10:00 AM</td>
-                          <td>+11 019453-9485398</td>
-                          <td>Dhaka</td>
-                          <td className="text-center">
-                            <span className="bg-warning-focus text-warning-main px-24 py-4 rounded-pill fw-medium text-sm">
-                              Pending
-                            </span>
-                          </td>
-                          <td className="text-center">
-                            <div className="d-flex justify-content-center gap-2">
-                              <div className="w-32-px cursor-pointer h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                                <Icon icon="mdi:tick"></Icon>
+                            ) : (
+                              <p className="">No Ruqyya </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-12">
+                        <h6 className="text-md text-primary-light mb-16">
+                          Hizama
+                        </h6>
+                        {hizamaPendingLoading ? (
+                          <Loading />
+                        ) : (
+                          <div className="mb-24 mt-16">
+                            {hizamaPendingData?.data?.length > 0 ? (
+                              <div className="table-responsive scroll-sm">
+                                <table className="table bordered-table sm-table mb-0">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Date</th>
+                                      <th scope="col">Time</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {hizamaPendingData?.data?.map(
+                                      ({ id, slottime, requestdate }) => (
+                                        <tr key={id}>
+                                          <td>
+                                            {
+                                              new Date(requestdate)
+                                                .toISOString()
+                                                .split("T")[0]
+                                            }
+                                          </td>
+                                          <td>{slottime}</td>
+                                        </tr>
+                                      )
+                                    )}
+                                  </tbody>
+                                </table>
+                                <Pagination
+                                  page={hizamaPendingPage}
+                                  setPage={setHizamaPendingPage}
+                                  totalPage={hizamaPendingData?.count}
+                                />
                               </div>
-                              <div className="w-32-px cursor-pointer h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                                <Icon icon="maki:cross"></Icon>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                            ) : (
+                              <p className="">No Hizama </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div
@@ -295,72 +381,107 @@ const ViewCustomer = () => {
                   aria-labelledby="pills-notification-tab"
                   tabIndex={0}
                 >
-                  <h6 className="text-md text-primary-light mb-16">Rejected</h6>
-
-                  <div className="table-responsive scroll-sm">
-                    <table className="table bordered-table sm-table mb-0">
-                      <thead>
-                        <tr>
-                          <th scope="col">Customer</th>
-                          <th scope="col">Date</th>
-                          <th scope="col">Time</th>
-                          <th scope="col">Number</th>
-                          <th scope="col">Address</th>
-                          <th scope="col" className="text-center">
-                            Status
-                          </th>
-                          <th scope="col" className="text-center">
-                            Action
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div className="d-flex align-items-center">
-                              <img
-                                src="/assets/images/users/user1.png"
-                                alt=""
-                                className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"
+                  <div>
+                    <div>
+                      <h6 className="text-md text-primary-light mb-16">
+                        Ruqyya
+                      </h6>
+                      {ruqyyaRejectedLoading ? (
+                        <Loading />
+                      ) : (
+                        <div className="mb-24 mt-16">
+                          {ruqyyaRejectedData?.data?.length > 0 ? (
+                            <div className="table-responsive scroll-sm">
+                              <table className="table bordered-table sm-table mb-0">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Time</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {ruqyyaRejectedData?.data?.map(
+                                    ({ id, slottime, requestdate }) => (
+                                      <tr key={id}>
+                                        <td>
+                                          {
+                                            new Date(requestdate)
+                                              .toISOString()
+                                              .split("T")[0]
+                                          }
+                                        </td>
+                                        <td>{slottime}</td>
+                                      </tr>
+                                    )
+                                  )}
+                                </tbody>
+                              </table>
+                              <Pagination
+                                page={ruqyyaRejectedPage}
+                                setPage={setRuqyyaRejectedPage}
+                                totalPage={ruqyyaRejectedData?.count}
                               />
-                              <div className="flex-grow-1">
-                                <h6 className="text-md mb-0 fw-medium">
-                                  Dianne Russell
-                                </h6>
-                                <span className="text-sm text-secondary-light fw-medium">
-                                  redaniel@gmail.com
-                                </span>
-                              </div>
                             </div>
-                          </td>
-                          <td>27 Mar 2024</td>
-                          <td>10:00 AM</td>
-                          <td>+11 019453-9485398</td>
-                          <td>Dhaka</td>
-                          <td className="text-center">
-                            <span className="bg-danger-focus text-danger-main px-24 py-4 rounded-pill fw-medium text-sm">
-                              Rejected
-                            </span>
-                          </td>
-                          <td className="text-center">
-                            <div className="d-flex justify-content-center gap-2">
-                              <div className="w-32-px cursor-pointer h-32-px bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                                <Icon icon="mdi:tick"></Icon>
-                              </div>
-                              <div className="w-32-px cursor-pointer h-32-px bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center">
-                                <Icon icon="maki:cross"></Icon>
-                              </div>
+                          ) : (
+                            <p className="">No Ruqyya </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-12">
+                      <h6 className="text-md text-primary-light mb-16">
+                        Hizama
+                      </h6>
+                      {hizamaRejectedLoading ? (
+                        <Loading />
+                      ) : (
+                        <div className="mb-24 mt-16">
+                          {hizamaRejectedData?.data?.length > 0 ? (
+                            <div className="table-responsive scroll-sm">
+                              <table className="table bordered-table sm-table mb-0">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Time</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {hizamaRejectedData?.data?.map(
+                                    ({ id, slottime, requestdate }) => (
+                                      <tr key={id}>
+                                        <td>
+                                          {
+                                            new Date(requestdate)
+                                              .toISOString()
+                                              .split("T")[0]
+                                          }
+                                        </td>
+                                        <td>{slottime}</td>
+                                      </tr>
+                                    )
+                                  )}
+                                </tbody>
+                              </table>
+                              <Pagination
+                                page={hizamaRejectedPage}
+                                setPage={setHizamaRejectedPage}
+                                totalPage={hizamaRejectedData?.count}
+                              />
                             </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                          ) : (
+                            <p className="">No Hizama </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+          )
+        }
       </div>
     </div>
   );

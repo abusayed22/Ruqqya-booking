@@ -43,34 +43,24 @@
   margin: 0 auto;   
 } */
 
-.modal-body-test{
-  /* padding: 1rem;   */
-}
+
 .text-justify {
   text-align: justify;
 }
 
-/* .modal-body {
-  padding: 1rem;     
-  max-height: 70vh; 
-  overflow-y: auto;  
-} */
+.problem-text{
+  min-height: calc(1.5em + .75rem );
+  border: 1px solid #6b7280;
+    /* background-color: var(--white); */
+    padding: .5625rem 1.25rem;
+    color: var(--text-primary-light) !important;
+    text-transform: capitalize !important;
+    font-size: small;
+}
 
-/* Specific Breakpoint for Mobile Screens */
-/* @media (max-width: 767px) {
-  .modal-dialog {
-    width: 90%; 
-  }
-
-  .modal-body {
-    max-height: 60vh; 
-    padding: 16px; 
-  }
-
-  .text-md {
-    font-size: 14px; 
-  }
-} */
+.capitalize {
+  text-transform: capitalize !important;
+}
 
 
 

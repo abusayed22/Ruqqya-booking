@@ -4,12 +4,17 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import ThemeToggleButton from "@/helper/ThemeToggleButton";
 import { Icon } from "@iconify/react";
+// import { signOut } from "@/auth";
+import { signOut } from "next-auth/react";
 
-const MasterLayout = ({ children }) => {
-  let pathname = usePathname();
+const MasterLayout = ({ children, session }) => {
+  const [userLoading, setUserLoading] = useState(false);
   let [sidebarActive, seSidebarActive] = useState(false);
   let [mobileMenu, setMobileMenu] = useState(false);
   const location = usePathname(); // Hook to get the current route
+  let pathname = usePathname();
+  const { user } = session;
+
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -89,9 +94,16 @@ const MasterLayout = ({ children }) => {
   let mobileMenuControl = () => {
     setMobileMenu(!mobileMenu);
   };
-  
+
+  const signOutHanler = async () => {
+    await signOut();
+  };
+
   return (
-    <section className={mobileMenu ? "overlay active" : "overlay "} onClick={mobileMenu ? mobileMenuControl : null}>
+    <section
+      className={mobileMenu ? "overlay active" : "overlay "}
+      onClick={mobileMenu ? mobileMenuControl : null}
+    >
       {/* sidebar */}
       <aside
         className={
@@ -101,7 +113,7 @@ const MasterLayout = ({ children }) => {
             ? "sidebar sidebar-open"
             : "sidebar"
         }
-        >
+      >
         <button
           onClick={mobileMenuControl}
           type="button"
@@ -139,58 +151,107 @@ const MasterLayout = ({ children }) => {
                 <span>Dashboard</span>
               </Link>
             </li>
+            {user.role === "user" && (
+              <li>
+                <Link
+                  href="/shedulebooking"
+                  className={
+                    pathname === "/shedulebooking" ? "active-page" : ""
+                  }
+                >
+                  <Icon icon="uit:calender" className="menu-icon" />
+                  <span>Shedule Booking</span>
+                </Link>
+              </li>
+            )}
+            {user.role === "user" && (
+              <li>
+                <Link
+                  href="/bookingstatus"
+                  className={pathname === "/bookingstatus" ? "active-page" : ""}
+                >
+                  <Icon icon="lets-icons:status-list" className="menu-icon" />
+                  <span>Booking Status</span>
+                </Link>
+              </li>
+            )}
+            {user.role === "admin" && (
+              <li>
+                <Link
+                  href="/createslot"
+                  className={pathname === "/createslot" ? "active-page" : ""}
+                >
+                  <Icon icon="carbon:create-link" className="menu-icon" />
+                  <span> Create Time Slot</span>
+                </Link>
+              </li>
+            )}
+            {user.role === "admin" && (
+              <li>
+                <Link
+                  href="/timeslot"
+                  className={pathname === "/timeslot" ? "active-page" : ""}
+                >
+                  <Icon icon="gravity-ui:list-timeline" className="menu-icon" />
+                  <span>Time Slot List</span>
+                </Link>
+              </li>
+            )}
+            {user.role === "admin" && (
+              <li>
+                <Link
+                  href="/bookingreq"
+                  className={pathname === "/bookingreq" ? "active-page" : ""}
+                >
+                  <Icon
+                    icon="mingcute:git-pull-request-fill"
+                    className="menu-icon"
+                  />
+                  <span> Booking Request</span>
+                </Link>
+              </li>
+            )}
+            {user.role === "admin" && (
+              <li>
+                <Link
+                  href="/bookingcomplete"
+                  className={
+                    pathname === "/bookingcomplete" ? "active-page" : ""
+                  }
+                >
+                  <Icon icon="mdi:account-tick" className="menu-icon" />
+                  <span> Booking Complete</span>
+                </Link>
+              </li>
+            )}
+
+            {user.role === "admin" && (
+              <li>
+                <Link
+                  href="/customers"
+                  className={pathname === "/customers" ? "active-page" : ""}
+                >
+                  <Icon
+                    icon="material-symbols-light:patient-list"
+                    className="menu-icon text-2xl"
+                  />
+                  <span> Customers</span>
+                </Link>
+              </li>
+            )}
+
             <li>
               <Link
-                href="/shedulebooking"
-                className={pathname === "/shedulebooking" ? "active-page" : ""}
+                href="/completedbooking"
+                className={
+                  pathname === "/completedbooking" ? "active-page" : ""
+                }
               >
-                <Icon icon="uit:calender" className="menu-icon" />
-                <span>Shedule Booking</span>
+                <Icon icon="mdi:playlist-tick" className="menu-icon text-2xl" />
+                <span> Completed Booking</span>
               </Link>
             </li>
-            <li>
-              <Link
-                href="/bookingstatus"
-                className={pathname === "/bookingstatus" ? "active-page" : ""}
-              >
-                <Icon icon="lets-icons:status-list" className="menu-icon" />
-                <span>Booking Status</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/createslot"
-                className={pathname === "/createslot" ? "active-page" : ""}
-              >
-                <Icon icon="carbon:create-link" className="menu-icon" />
-                <span> Create Time Slot</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/bookingreq"
-                className={pathname === "/bookingreq" ? "active-page" : ""}
-              >
-                <Icon
-                  icon="fluent-mdl2:message-friend-request"
-                  className="menu-icon"
-                />
-                <span> Booking Request</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/customers"
-                className={pathname === "/customers" ? "active-page" : ""}
-              >
-                <Icon
-                  icon="material-symbols-light:patient-list"
-                  className="menu-icon text-2xl"
-                />
-                <span> Customers</span>
-              </Link>
-            </li>
-            <li>
+            {/* <li>
               <Link
                 href="/settings"
                 className={pathname === "/settings" ? "active-page" : ""}
@@ -198,7 +259,7 @@ const MasterLayout = ({ children }) => {
                 <Icon icon="icon-park-outline:setting" className="menu-icon" />
                 <span>Settings</span>
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
       </aside>
@@ -243,215 +304,7 @@ const MasterLayout = ({ children }) => {
               <div className="d-flex flex-wrap align-items-center gap-3">
                 {/* ThemeToggleButton */}
                 <ThemeToggleButton />
-                <div className="dropdown d-none d-sm-inline-block">
-                  <button
-                    className="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                  >
-                    <img
-                      src="/assets/images/lang-flag.png"
-                      alt="Wowdash"
-                      className="w-24 h-24 object-fit-cover rounded-circle"
-                    />
-                  </button>
-                  <div className="dropdown-menu to-top dropdown-menu-sm">
-                    <div className="py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
-                      <div>
-                        <h6 className="text-lg text-primary-light fw-semibold mb-0">
-                          Choose Your Language
-                        </h6>
-                      </div>
-                    </div>
-                    <div className="max-h-400-px overflow-y-auto scroll-sm pe-8">
-                      <div className="form-check style-check d-flex align-items-center justify-content-between mb-16">
-                        <label
-                          className="form-check-label line-height-1 fw-medium text-secondary-light"
-                          htmlFor="english"
-                        >
-                          <span className="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                            <img
-                              src="/assets/images/flags/flag1.png"
-                              alt=""
-                              className="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0"
-                            />
-                            <span className="text-md fw-semibold mb-0">
-                              English
-                            </span>
-                          </span>
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="crypto"
-                          id="english"
-                        />
-                      </div>
-                      <div className="form-check style-check d-flex align-items-center justify-content-between mb-16">
-                        <label
-                          className="form-check-label line-height-1 fw-medium text-secondary-light"
-                          htmlFor="japan"
-                        >
-                          <span className="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                            <img
-                              src="/assets/images/flags/flag2.png"
-                              alt=""
-                              className="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0"
-                            />
-                            <span className="text-md fw-semibold mb-0">
-                              Japan
-                            </span>
-                          </span>
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="crypto"
-                          id="japan"
-                        />
-                      </div>
-                      <div className="form-check style-check d-flex align-items-center justify-content-between mb-16">
-                        <label
-                          className="form-check-label line-height-1 fw-medium text-secondary-light"
-                          htmlFor="france"
-                        >
-                          <span className="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                            <img
-                              src="/assets/images/flags/flag3.png"
-                              alt=""
-                              className="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0"
-                            />
-                            <span className="text-md fw-semibold mb-0">
-                              France
-                            </span>
-                          </span>
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="crypto"
-                          id="france"
-                        />
-                      </div>
-                      <div className="form-check style-check d-flex align-items-center justify-content-between mb-16">
-                        <label
-                          className="form-check-label line-height-1 fw-medium text-secondary-light"
-                          htmlFor="germany"
-                        >
-                          <span className="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                            <img
-                              src="/assets/images/flags/flag4.png"
-                              alt=""
-                              className="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0"
-                            />
-                            <span className="text-md fw-semibold mb-0">
-                              Germany
-                            </span>
-                          </span>
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="crypto"
-                          id="germany"
-                        />
-                      </div>
-                      <div className="form-check style-check d-flex align-items-center justify-content-between mb-16">
-                        <label
-                          className="form-check-label line-height-1 fw-medium text-secondary-light"
-                          htmlFor="korea"
-                        >
-                          <span className="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                            <img
-                              src="/assets/images/flags/flag5.png"
-                              alt=""
-                              className="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0"
-                            />
-                            <span className="text-md fw-semibold mb-0">
-                              South Korea
-                            </span>
-                          </span>
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="crypto"
-                          id="korea"
-                        />
-                      </div>
-                      <div className="form-check style-check d-flex align-items-center justify-content-between mb-16">
-                        <label
-                          className="form-check-label line-height-1 fw-medium text-secondary-light"
-                          htmlFor="bangladesh"
-                        >
-                          <span className="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                            <img
-                              src="/assets/images/flags/flag6.png"
-                              alt=""
-                              className="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0"
-                            />
-                            <span className="text-md fw-semibold mb-0">
-                              Bangladesh
-                            </span>
-                          </span>
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="crypto"
-                          id="bangladesh"
-                        />
-                      </div>
-                      <div className="form-check style-check d-flex align-items-center justify-content-between mb-16">
-                        <label
-                          className="form-check-label line-height-1 fw-medium text-secondary-light"
-                          htmlFor="india"
-                        >
-                          <span className="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                            <img
-                              src="/assets/images/flags/flag7.png"
-                              alt=""
-                              className="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0"
-                            />
-                            <span className="text-md fw-semibold mb-0">
-                              India
-                            </span>
-                          </span>
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="crypto"
-                          id="india"
-                        />
-                      </div>
-                      <div className="form-check style-check d-flex align-items-center justify-content-between">
-                        <label
-                          className="form-check-label line-height-1 fw-medium text-secondary-light"
-                          htmlFor="canada"
-                        >
-                          <span className="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                            <img
-                              src="/assets/images/flags/flag8.png"
-                              alt=""
-                              className="w-36-px h-36-px bg-success-subtle text-success-main rounded-circle flex-shrink-0"
-                            />
-                            <span className="text-md fw-semibold mb-0">
-                              Canada
-                            </span>
-                          </span>
-                        </label>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="crypto"
-                          id="canada"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Language dropdown end */}
+
                 <div className="dropdown">
                   <button
                     className="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center"
@@ -794,7 +647,7 @@ const MasterLayout = ({ children }) => {
                     data-bs-toggle="dropdown"
                   >
                     <img
-                      src="/assets/images/user.png"
+                      src={user.img || "/assets/images/user.png"}
                       alt="image_user"
                       className="w-40-px h-40-px object-fit-cover rounded-circle"
                     />
@@ -802,11 +655,11 @@ const MasterLayout = ({ children }) => {
                   <div className="dropdown-menu to-top dropdown-menu-sm">
                     <div className="py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
                       <div>
-                        <h6 className="text-lg text-primary-light fw-semibold mb-2">
-                          Shaidul Islam
+                        <h6 className="text-lg capitalize text-primary-light fw-semibold mb-2">
+                          {user.name}
                         </h6>
-                        <span className="text-secondary-light fw-medium text-sm">
-                          Admin
+                        <span className="capitalize text-secondary-light fw-medium text-sm">
+                          {user.role || "User"}
                         </span>
                       </div>
                       <button type="button" className="hover-text-danger">
@@ -820,7 +673,7 @@ const MasterLayout = ({ children }) => {
                       <li>
                         <Link
                           className="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3"
-                          href="/view-profile"
+                          href={`/view-profile/${user.id}`}
                         >
                           <Icon
                             icon="solar:user-linear"
@@ -844,7 +697,7 @@ const MasterLayout = ({ children }) => {
                       <li>
                         <Link
                           className="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3"
-                          href="/company"
+                          href="/settings"
                         >
                           <Icon
                             icon="icon-park-outline:setting-two"
@@ -854,13 +707,13 @@ const MasterLayout = ({ children }) => {
                         </Link>
                       </li>
                       <li>
-                        <Link
+                        <button
                           className="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-danger d-flex align-items-center gap-3"
-                          href="#"
+                          onClick={() => signOut()}
                         >
                           <Icon icon="lucide:power" className="icon text-xl" />{" "}
                           Log Out
-                        </Link>
+                        </button>
                       </li>
                     </ul>
                   </div>

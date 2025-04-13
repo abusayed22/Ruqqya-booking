@@ -1,12 +1,18 @@
-import SheduleBooking from '@/components/SheduleBooking'
-import React from 'react'
+import { auth } from "@/auth";
+import SheduleBooking from "@/components/SheduleBooking";
+import { notFound } from "next/navigation";
+import React from "react";
 
-const page = () => {
-  return (
-    <div>
-      <SheduleBooking />
-    </div>
-  )
-}
+const page = async () => {
+  const session = await auth();
+  const user = session?.user;
+  if (user?.role === "user") {
+    return <SheduleBooking user={session?.user} />;
+  } else if (user?.role === "admin") {
+    return notFound();
+  } else {
+    return notFound();
+  }
+};
 
-export default page
+export default page;

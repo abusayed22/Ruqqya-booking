@@ -1,22 +1,64 @@
 "use client";
+import {
+  customerInfo,
+  customerInfoUpdate,
+} from "@/lib/user/actions/viewProfile";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import ProfileInfoCom from "./ProfileInfoCom";
+import { toast, ToastContainer } from "react-toastify";
+import { constructNow } from "date-fns";
+import { resetPassword, verifiedPassword } from "@/lib/actions/auth";
+import { useSession } from "next-auth/react";
 
-const ProfileLayer = () => {
-  const profileInfo = {
-    name: "Sayed",
-    email: "sayed@gmail.com",
-    password: "1234",
-    profileImg: "/assets/images/user-grid/user-grid-img13.png",
-    phone: "01918181814",
-    address: "Mughda, Dhaka",
+const ProfileLayer = ({ user }) => {
+  // loading
+  const [loading, setLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  // validation
+  const [errors, setErrors] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [confirmPassword, setComfirmPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [oldPasswordVisible, setOldPasswordVisible] = useState(false);
+  const [profileData, setProfileData] = useState(null);
+  // edit
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  // password
+  const [verified, setVerified] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+
+  const { data: session, update } = useSession();
+  
+
+  const fetchProfileData = async () => {
+    try {
+      setLoading(true);
+      const data = await customerInfo(user.id);
+      if (data) {
+        setAddress(data.address ?? "");
+        setProfileData(data);
+        setName(data.name ?? "");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
 
   const [imagePreview, setImagePreview] = useState(
     "/assets/images/user-grid/user-grid-img13.png"
   );
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   // Toggle function for password field
   const togglePasswordVisibility = () => {
@@ -26,6 +68,9 @@ const ProfileLayer = () => {
   // Toggle function for confirm password field
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
+  };
+  const toggleOldPasswordPasswordVisibility = () => {
+    setOldPasswordVisible(!oldPasswordVisible);
   };
 
   const readURL = (input) => {
@@ -38,72 +83,109 @@ const ProfileLayer = () => {
     }
   };
 
+
+  const editSaveHandler = async () => {
+    setEditLoading(true);
+    try {
+      const updateResult = await customerInfoUpdate(
+        profileData.id,
+        name,
+        address
+      );
+      if (updateResult) {
+        await fetchProfileData(); // Ensure this updates `profileData` state
+        toast.success("Update profile successfully");
+        setEditLoading(false);
+        const updatedSession = await update({
+          ...session,
+          user: {
+            ...session?.user,
+            name:name
+          }
+        })
+        window.location.reload();
+        console.log("updated", updatedSession)
+      }
+    } catch (error) {
+      setEditLoading(false);
+      toast.error(
+        "Update profile failed: " + (error.message || "Something went wrong!")
+      );
+    }
+  };
+
+  const verifiedHandler = async () => {
+    setVerifyLoading(true);
+    const isVerify = await verifiedPassword(user.email, user.id, oldPassword);
+    if (isVerify.success) {
+      setVerified(true);
+      setVerifyLoading(false);
+    } else {
+      toast.error(isVerify.massage);
+      setOldPassword("");
+      setVerifyLoading(false);
+    }
+  };
+
+  // edit form validation
+  useEffect(() => {
+    const isValidField = (field) =>
+      field?.trim() !== "" && field !== null && field !== undefined;
+    const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+    const isValidPhone = (num) => !isNaN(num) && num.length >= 10;
+    const isPasswordMatch = (newPass, confirmPass) => newPass === confirmPass;
+    const hasChanges =
+      name?.trim() !== profileData?.name?.trim() ||
+      address?.trim() !== profileData?.address?.trim();
+    const isProfileValid =
+      isValidField(name) && isValidField(address) && hasChanges;
+    setIsFormValid(isProfileValid);
+  }, [name, address, profileData?.name, profileData?.address]);
+
+  // old password validation
+  useEffect(() => {
+    if (!verified) {
+      const isValid = oldPassword.trim() !== "";
+      setIsFormValid(isValid);
+    }
+  }, [oldPassword, verified]);
+
+  // new and confirm pass validation
+  useEffect(() => {
+    if (verified) {
+      const isValid =
+        newPassword.trim() !== "" &&
+        confirmPassword.trim() !== "" &&
+        newPassword === confirmPassword;
+
+      setIsFormValid(isValid);
+    }
+  }, [newPassword, confirmPassword, verified]);
+
+  const resetHandler = async () => {
+    setResetLoading(true);
+    const isVerify = await resetPassword(user.email, user.id, newPassword);
+    if (isVerify.success) {
+      toast.success(isVerify.message);
+      setVerified(false);
+      setOldPassword("");
+      setNewPassword("");
+      setComfirmPassword("");
+      setResetLoading(false);
+    } else {
+      toast.error(isVerify.error);
+      setOldPassword("");
+      setNewPassword("");
+      setResetLoading(false);
+    }
+  };
+
   return (
     <div>
+      <ToastContainer />
       <div className="row gy-4">
-        <div className="col-lg-4">
-          <div className="user-grid-card position-relative border radius-16 overflow-hidden bg-base h-100">
-            <img
-              src="/assets/images/user-grid/user-grid-bg1.png"
-              alt=""
-              className="w-100 object-fit-cover"
-            />
-            <div className="pb-24 ms-16 mb-24 me-16  mt--100">
-              <div className="text-center border border-top-0 border-start-0 border-end-0">
-                <img
-                  src="/assets/images/user-grid/user-grid-img14.png"
-                  alt=""
-                  className="border br-white border-width-2-px w-200-px h-200-px rounded-circle object-fit-cover"
-                />
-                <h6 className="mb-0 mt-16">{profileInfo.name}</h6>
-                <span className="text-secondary-light mb-16">
-                  {profileInfo.email}
-                </span>
-              </div>
-              <div className="mt-24">
-                <h6 className="text-xl mb-16">Personal Info</h6>
-                <ul>
-                  <li className="d-flex align-items-center gap-1 mb-12">
-                    <span className="w-30 text-md fw-semibold text-primary-light">
-                      Full Name
-                    </span>
-                    <span className="w-70 text-secondary-light fw-medium">
-                      : {profileInfo.name}
-                    </span>
-                  </li>
-                  <li className="d-flex align-items-center gap-1 mb-12">
-                    <span className="w-30 text-md fw-semibold text-primary-light">
-                      {" "}
-                      Email
-                    </span>
-                    <span className="w-70 text-secondary-light fw-medium">
-                      : {profileInfo.email}
-                    </span>
-                  </li>
-                  <li className="d-flex align-items-center gap-1 mb-12">
-                    <span className="w-30 text-md fw-semibold text-primary-light">
-                      {" "}
-                      Phone Number
-                    </span>
-                    <span className="w-70 text-secondary-light fw-medium">
-                      : {profileInfo.phone}
-                    </span>
-                  </li>
+        <ProfileInfoCom personalInfo={profileData} />
 
-                  <li className="d-flex align-items-center gap-1 mb-12">
-                    <span className="w-30 text-md fw-semibold text-primary-light">
-                      {" "}
-                      Address
-                    </span>
-                    <span className="w-70 text-secondary-light fw-medium">
-                      : {profileInfo.address}
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="col-lg-8">
           <div className="card h-100">
             <div className="card-body p-24">
@@ -139,21 +221,6 @@ const ProfileLayer = () => {
                     tabIndex={-1}
                   >
                     Change Password
-                  </button>
-                </li>
-                <li className="nav-item" role="presentation">
-                  <button
-                    className="nav-link d-flex align-items-center px-24"
-                    id="pills-notification-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#pills-notification"
-                    type="button"
-                    role="tab"
-                    aria-controls="pills-notification"
-                    aria-selected="false"
-                    tabIndex={-1}
-                  >
-                    Notification Settings
                   </button>
                 </li>
               </ul>
@@ -217,7 +284,8 @@ const ProfileLayer = () => {
                             type="text"
                             className="form-control radius-8"
                             id="name"
-                            value={profileInfo.name}
+                            value={name ?? ""}
+                            onChange={(e) => setName(e.target.value)}
                             placeholder="Enter Full Name"
                           />
                         </div>
@@ -231,11 +299,12 @@ const ProfileLayer = () => {
                             Email <span className="text-danger-600">*</span>
                           </label>
                           <input
+                            disabled
                             type="email"
-                            className="form-control radius-8"
+                            className="form-control radius-8 "
                             id="email"
                             placeholder="Enter email address"
-                            value={profileInfo.email}
+                            value={profileData?.email ?? ""}
                           />
                         </div>
                       </div>
@@ -248,11 +317,12 @@ const ProfileLayer = () => {
                             Phone
                           </label>
                           <input
+                            disabled
                             type="email"
                             className="form-control radius-8"
                             id="number"
                             placeholder="Enter phone number"
-                            value={profileInfo.phone}
+                            value={profileData?.phone ?? ""}
                           />
                         </div>
                       </div>
@@ -265,23 +335,20 @@ const ProfileLayer = () => {
                             Address
                           </label>
                           <input
-                            type="email"
+                            type="text"
                             className="form-control radius-8"
                             id="number"
-                            placeholder="Enter phone number"
-                            value={profileInfo.address}
+                            placeholder="Enter address"
+                            value={address ?? ""}
+                            onChange={(e) => setAddress(e.target.value)}
                           />
                         </div>
                       </div>
                     </div>
                     <div className="d-flex align-items-center justify-content-center gap-3">
                       <button
-                        type="button"
-                        className="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-56 py-11 radius-8"
-                      >
-                        Cancel
-                      </button>
-                      <button
+                        disabled={editLoading || !isFormValid}
+                        onClick={editSaveHandler}
                         type="button"
                         className="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
                       >
@@ -297,149 +364,114 @@ const ProfileLayer = () => {
                   aria-labelledby="pills-change-passwork-tab"
                   tabIndex="0"
                 >
-                  <div className="mb-20">
-                    <label
-                      htmlFor="your-password"
-                      className="form-label fw-semibold text-primary-light text-sm mb-8"
-                    >
-                      New Password <span className="text-danger-600">*</span>
-                    </label>
-                    <div className="position-relative">
-                      <input
-                        type={passwordVisible ? "text" : "password"}
-                        className="form-control radius-8"
-                        id="your-password"
-                        placeholder="Enter New Password*"
-                      />
-                      <span
-                        className={`toggle-password ${
-                          passwordVisible ? "ri-eye-off-line" : "ri-eye-line"
-                        } cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light`}
-                        onClick={togglePasswordVisibility}
-                      ></span>
-                    </div>
-                  </div>
+                  {verified ? (
+                    <>
+                      <div className="mb-20">
+                        <label
+                          htmlFor="your-password"
+                          className="form-label fw-semibold text-primary-light text-sm mb-8"
+                        >
+                          New Password{" "}
+                          <span className="text-danger-600">*</span>
+                        </label>
+                        <div className="position-relative">
+                          <input
+                            type={passwordVisible ? "text" : "password"}
+                            className="form-control radius-8"
+                            id="your-password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            placeholder="Enter New Password*"
+                          />
+                          <span
+                            className={`toggle-password ${
+                              passwordVisible
+                                ? "ri-eye-off-line"
+                                : "ri-eye-line"
+                            } cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light`}
+                            onClick={togglePasswordVisibility}
+                          ></span>
+                        </div>
+                      </div>
 
-                  <div className="mb-20">
-                    <label
-                      htmlFor="confirm-password"
-                      className="form-label fw-semibold text-primary-light text-sm mb-8"
-                    >
-                      Confirm Password{" "}
-                      <span className="text-danger-600">*</span>
-                    </label>
-                    <div className="position-relative">
-                      <input
-                        type={confirmPasswordVisible ? "text" : "password"}
-                        className="form-control radius-8"
-                        id="confirm-password"
-                        placeholder="Confirm Password*"
-                      />
-                      <span
-                        className={`toggle-password ${
-                          confirmPasswordVisible
-                            ? "ri-eye-off-line"
-                            : "ri-eye-line"
-                        } cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light`}
-                        onClick={toggleConfirmPasswordVisibility}
-                      ></span>
+                      <div className="mb-20">
+                        <label
+                          htmlFor="confirm-password"
+                          className="form-label fw-semibold text-primary-light text-sm mb-8"
+                        >
+                          Confirm Password{" "}
+                          <span className="text-danger-600">*</span>
+                        </label>
+                        <div className="position-relative">
+                          <input
+                            type={confirmPasswordVisible ? "text" : "password"}
+                            className="form-control radius-8"
+                            id="confirm-password"
+                            value={confirmPassword}
+                            onChange={(e) => setComfirmPassword(e.target.value)}
+                            placeholder="Confirm Password*"
+                          />
+
+                          <span
+                            className={`toggle-password ${
+                              confirmPasswordVisible
+                                ? "ri-eye-off-line"
+                                : "ri-eye-line"
+                            } cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light`}
+                            onClick={toggleConfirmPasswordVisibility}
+                          ></span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="mb-20">
+                      <label
+                        htmlFor="confirm-password"
+                        className="form-label fw-semibold text-primary-light text-sm mb-8"
+                      >
+                        Old Password <span className="text-danger-600">*</span>
+                      </label>
+                      <div className="position-relative">
+                        <input
+                          type={oldPasswordVisible ? "text" : "password"}
+                          className="form-control radius-8"
+                          id="confirm-password"
+                          value={oldPassword}
+                          onChange={(e) => setOldPassword(e.target.value)}
+                          placeholder="Old Password*"
+                        />
+
+                        <span
+                          className={`toggle-password ${
+                            oldPasswordVisible
+                              ? "ri-eye-off-line"
+                              : "ri-eye-line"
+                          } cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light`}
+                          onClick={toggleOldPasswordPasswordVisibility}
+                        ></span>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div
-                  className="tab-pane fade"
-                  id="pills-notification"
-                  role="tabpanel"
-                  aria-labelledby="pills-notification-tab"
-                  tabIndex={0}
-                >
-                  <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                    <label
-                      htmlFor="companzNew"
-                      className="position-absolute w-100 h-100 start-0 top-0"
-                    />
-                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                      <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                        Company News
-                      </span>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        id="companzNew"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                    <label
-                      htmlFor="pushNotifcation"
-                      className="position-absolute w-100 h-100 start-0 top-0"
-                    />
-                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                      <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                        Push Notification
-                      </span>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        id="pushNotifcation"
-                        defaultChecked=""
-                      />
-                    </div>
-                  </div>
-                  <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                    <label
-                      htmlFor="weeklyLetters"
-                      className="position-absolute w-100 h-100 start-0 top-0"
-                    />
-                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                      <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                        Weekly News Letters
-                      </span>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        id="weeklyLetters"
-                        defaultChecked=""
-                      />
-                    </div>
-                  </div>
-                  <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                    <label
-                      htmlFor="meetUp"
-                      className="position-absolute w-100 h-100 start-0 top-0"
-                    />
-                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                      <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                        Meetups Near you
-                      </span>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        id="meetUp"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-switch switch-primary py-12 px-16 border radius-8 position-relative mb-16">
-                    <label
-                      htmlFor="orderNotification"
-                      className="position-absolute w-100 h-100 start-0 top-0"
-                    />
-                    <div className="d-flex align-items-center gap-3 justify-content-between">
-                      <span className="form-check-label line-height-1 fw-medium text-secondary-light">
-                        Orders Notifications
-                      </span>
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        id="orderNotification"
-                        defaultChecked=""
-                      />
-                    </div>
+                  )}
+                  <div className="w-100 mt-5 d-flex justify-content-center ">
+                    {!verified ? (
+                      <button
+                        disabled={verifyLoading || !isFormValid}
+                        onClick={verifiedHandler}
+                        type="button"
+                        className="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
+                      >
+                        Verify
+                      </button>
+                    ) : (
+                      <button
+                        disabled={resetLoading || !isFormValid}
+                        onClick={resetHandler}
+                        type="button"
+                        className="btn btn-primary border border-primary-600 text-md px-56 py-12 radius-8"
+                      >
+                        Reset
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

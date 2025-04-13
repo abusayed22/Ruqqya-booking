@@ -2,11 +2,11 @@ import Link from "next/link";
 import React, { useState } from "react";
 
 const Dropdown = ({ label, value, onSelect}) => {
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(value[0] || "");
 
   const handleSelect = (item) => {
-    setSelected(item);   // Update the selected item in the dropdown
-    onSelect(item);      // Call the parent callback to update the parent's state
+    setSelected(item); // Set the selected item to the state
+    onSelect(item); // Pass updated selection to the parent
   };
 
   return (
@@ -24,11 +24,15 @@ const Dropdown = ({ label, value, onSelect}) => {
         {value?.map((item, index) => (
           <li key={index}>
             <Link
-              onClick={() => handleSelect(item)}
+              onClick={(e) => {
+                e.preventDefault(); // Prevent default link behavior
+                handleSelect(item);
+              }}
               className="dropdown-item px-16 text-capitalize py-8 rounded text-secondary-light bg-hover-neutral-200 text-hover-neutral-900 w-full"
               href="#"
             >
               {item}
+              {selected === item && " (Selected)"} {/* Display selected item */}
             </Link>
           </li>
         ))}

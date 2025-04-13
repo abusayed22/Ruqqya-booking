@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id        Int       @id @unique @default(autoincrement())
+  email     String    @unique
+  name      String
+  phone     String @unique
+  address   String
+  password  String
+  // otp       String
+  // token     String
+  role      String    @default("user")
+  createdAt DateTime? @default(now())
+  updateAt  DateTime? @default(now()) @updatedAt
+  ruqyya    ruqyya[]
+  hizama    hizama[]
+  collection collection[]
+}
+
+model ruqyya {
+  id          Int        @id @unique @default(autoincrement())
+  requestdate DateTime @db.Date
+  // slottime    timeslot[]
+  slottime    String?
+  problem     String
+  status      String     @default("pending")
+  createdAt   DateTime?  @default(now())
+  updateAt    DateTime?  @default(now()) @updatedAt
+  userId      Int
+  user        user       @relation(references: [id], fields: [userId])
+}
+
+model hizama {
+  id          Int        @id @unique @default(autoincrement())
+  requestdate DateTime @db.Date
+  // slottime    timeslot[]
+  slottime    String
+  problem     String
+  status      String     @default("pending")
+  createdAt   DateTime?  @default(now())
+  updateAt    DateTime?  @default(now()) @updatedAt
+  userId      Int
+  user        user       @relation(references: [id], fields: [userId])
+}
+
+model timeslot {
+  id        Int       @id @unique @default(autoincrement())
+  time      String
+  // hizamaId  Int
+  // hizama    hizama    @relation(references: [id], fields: [hizamaId])
+  // ruqyyaId  Int
+  // ruqyya    ruqyya    @relation(references: [id], fields: [ruqyyaId])
+  category String
+  createdAt DateTime? @default(now())
+  updateAt  DateTime? @default(now()) @updatedAt
+}
+
+model collection {
+  id Int @id @unique @default(autoincrement())
+  amount Float
+
+  userId Int
+  user user @relation(references: [id],fields: [userId])
+  type String
+  createdAt DateTime? @default(now())
+}

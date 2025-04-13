@@ -4,8 +4,13 @@ import Dropdown from "./child/Dropdown";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Icon } from "@iconify/react";
+import { createBooking } from "@/lib/user/booking";
+import { es } from "date-fns/locale";
+import { checkDateTime } from "@/lib/user/actions/checkDateTime";
+import { toast, ToastContainer } from "react-toastify";
+import { useRouter } from "next/navigation";
 
-const SheduleBooking = () => {
+const SheduleBooking = ({ user }) => {
   const [wizard, setWizard] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -14,22 +19,22 @@ const SheduleBooking = () => {
   const [address, setAddress] = useState("");
   const [time, setTime] = useState("");
   const [problem, setProblem] = useState("");
-  const [method, setMethod] = useState("");
-  const [amount, setAmount] = useState("");
   const [formErrors, setFormErrors] = useState({});
   const [formValid, setFormValid] = useState(false);
   const [formValid2, setFormValid2] = useState(false);
   const [formValid3, setFormValid3] = useState(false);
+  const [availableSlot, setAvailableSlot] = useState([]);
+
+  const router = useRouter();
 
   const handleSelectCategory = (selectedValue) => {
     setSelectedCategory(selectedValue);
   };
 
-  useEffect(() => {}, []);
-
   const nextHandler = () => {
     setWizard((prev) => prev + 1);
   };
+
   const prevHandler = () => {
     setWizard((prev) => prev - 1);
   };
@@ -42,16 +47,21 @@ const SheduleBooking = () => {
     });
   };
 
-  //
+  useEffect(() => {
+    const fetchingCheckData = async () => {
+      const fetchData = await checkDateTime(selectedCategory, selectedDate);
+      setAvailableSlot(fetchData);
+    };
+    fetchingCheckData();
+  }, [selectedCategory, selectedDate]);
+
   useEffect(() => {
     const errors = {};
-
     if (!selectedCategory) errors.category = "Category is required";
     if (!selectedDate) errors.date = "Date is required";
     if (!name.trim()) errors.name = "Name is required";
     if (!phone.trim()) errors.phone = "Phone is required";
     if (!address.trim()) errors.address = "Address is required";
-
     setFormErrors(errors);
     setFormValid(Object.keys(errors).length === 0);
   }, [selectedCategory, selectedDate, name, phone, address]);
@@ -72,20 +82,32 @@ const SheduleBooking = () => {
     }
   }, [problem]);
 
-  const timeSlots = [
-    "09:00 AM",
-    "09:30 AM",
-    "10:00 AM",
-    "10:30 AM",
-    "11:00 AM",
-    "11:30 AM",
-    "12:00 PM",
-    "12:30 PM",
-    "01:00 PM",
-  ];
+  const bookingHandler = async (e) => {
+    e.preventDefault();
+    const formObj = {
+      selectedCategory,
+      selectedDate,
+      name,
+      phone,
+      address,
+      time,
+      problem,
+    };
+
+    try {
+      const submit = await createBooking(formObj);
+      if (submit.success) {
+        toast.success(submit.message);
+        router.push("/bookingstatus")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="row py-4">
+      <ToastContainer />
       <div className="card">
         <div className="card-body">
           <h6 className="mb-4 text-xl">Shedule Booking</h6>
@@ -94,7 +116,7 @@ const SheduleBooking = () => {
           </p>
 
           <div className="form-wizard">
-            <form action="#" method="post">
+            <form>
               <div className="form-wizard-header overflow-x-auto scroll-sm pb-8 my-32">
                 <ul className="list-unstyled form-wizard-list">
                   <li
@@ -148,7 +170,7 @@ const SheduleBooking = () => {
                         <div>
                           <Dropdown
                             label="Category"
-                            value={["ruqayya", "hizama"]}
+                            value={["ruqyya", "hizama"]}
                             onSelect={handleSelectCategory} // Pass the handler function as a prop
                           />
                         </div>
@@ -157,7 +179,7 @@ const SheduleBooking = () => {
                           <br />
                           <div className="w-100">
                             <DatePicker
-                              locale={"es"}
+                              locale={es}
                               className="btn text-primary-600 hover-text-primary px-18 py-11 dropdown-toggle toggle-icon show border w-100 "
                               selected={selectedDate}
                               onChange={(date) => setSelectedDate(date)}
@@ -237,29 +259,34 @@ const SheduleBooking = () => {
                   <div className="row gy-3">
                     <div className="border rounded p-3 d-flex flex-column gap-3">
                       <div className="d-flex flex-column gap-28">
-                        {timeSlots.map((item, index) => (
-                          <div
-                            key={item}
-                            className={`form-check ${
-                              time === item && "checked-primary"
-                            } d-flex align-items-center gap-2`}
-                          >
-                            <input
-                              onClick={() => setTime(item)}
-                              className="form-check-input"
-                              type="radio"
-                              name="horizontal"
-                              id={`horizontal${index}`}
-                            />
-                            <label
-                              // onClick={() => setTime(item)}
-                              className="form-check-label line-height-1 fw-medium"
-                              htmlFor={`horizontal${index}`}
+                        {availableSlot.length > 0 ? (
+                          availableSlot.map((item, index) => (
+                            <div
+                              key={item}
+                              className={`form-check ${
+                                time === item.time && "checked-primary"
+                              } d-flex align-items-center gap-2`}
                             >
-                              {item}
-                            </label>
+                              <input
+                                onClick={() => setTime(item.time)}
+                                className="form-check-input"
+                                type="radio"
+                                name="horizontal"
+                                id={`horizontal${index}`}
+                              />
+                              <label
+                                className="form-check-label line-height-1 fw-medium"
+                                htmlFor={`horizontal${index}`}
+                              >
+                                {item.time}
+                              </label>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="no-available-time">
+                            No available time schedule {formatedDate()}
                           </div>
-                        ))}
+                        )}
                       </div>
                     </div>
                     <div className="form-group d-flex align-items-center justify-content-end gap-8">
@@ -395,14 +422,8 @@ const SheduleBooking = () => {
                       <div>
                         <div className="position-relative ">
                           <label className="form-label"> Problem*</label>
-                          <textarea
-                            name="#0"
-                            className=" form-control text-capitalize"
-                            rows="4"
-                            cols="50"
-                            disabled
-                            value={problem}
-                          ></textarea>
+                          <p className="  problem-text rounded">{problem}</p>
+
                           <div className="wizard-form-error"></div>
                         </div>
                       </div>
@@ -417,7 +438,7 @@ const SheduleBooking = () => {
                         Back
                       </button>
                       <button
-                        onClick={nextHandler}
+                        onClick={bookingHandler}
                         type="button"
                         className="form-wizard-next-btn btn btn-primary-600 px-32"
                       >

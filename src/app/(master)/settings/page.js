@@ -1,11 +1,16 @@
+import { auth } from '@/auth';
 import ProfileLayer from '@/components/ProfileLayer'
-import Test from '@/components/Test'
+import { customerInfo } from '@/lib/user/actions/viewProfile';
 import React from 'react'
 
-const page = () => {
+const page = async() => {
+   const session = await auth();
+   const user = session?.user;
+
+     
   return (
     <div>
-        <ProfileLayer />
+        <ProfileLayer user={user}/>
     </div>
   )
 }

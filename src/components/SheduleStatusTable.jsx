@@ -57,13 +57,13 @@ const SheduleStatusTable = () => {
                         </div>
                       </td>
                       <td>
-                        <div class="d-flex align-items-center">
+                        <div className="d-flex align-items-center">
                           <img
                             src="/assets/images/users/user1.png"
                             alt=""
-                            class="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"
+                            className="w-40-px h-40-px rounded-circle flex-shrink-0 me-12 overflow-hidden"
                           />
-                          <h6 class="text-md mb-0 fw-medium flex-grow-1">
+                          <h6 className="text-md mb-0 fw-medium flex-grow-1">
                             {firstName} {lastName}
                           </h6>
                         </div>
