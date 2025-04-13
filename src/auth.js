@@ -30,6 +30,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   pages: "/sign-in",
   secret: process.env.NEXTAUTH_URL,
+  trustHost:true,
+  debug:true,
   callbacks: {
     async jwt({ token, user,trigger,session }) {
       if(trigger === "update"){
