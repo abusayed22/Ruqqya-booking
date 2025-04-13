@@ -2,12 +2,10 @@
   "name": "shedulebooking",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+ "scripts": {
+  "dev": "next dev -p 4000",
+  "start": "next start -p 4000"
+},
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",
     "@fullcalendar/core": "^6.1.15",
