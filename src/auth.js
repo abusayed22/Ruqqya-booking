@@ -29,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   pages: "/sign-in",
-  secret: process.env.NEXTAUTH_URL,
+  // secret: process.env.NEXTAUTH_URL,
   trustHost:true,
   debug:true,
   callbacks: {
