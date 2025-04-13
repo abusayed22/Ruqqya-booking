@@ -151,7 +151,7 @@ const MasterLayout = ({ children, session }) => {
                 <span>Dashboard</span>
               </Link>
             </li>
-            {user.role === "user" && (
+            {user?.role === "user" && (
               <li>
                 <Link
                   href="/shedulebooking"
@@ -164,7 +164,7 @@ const MasterLayout = ({ children, session }) => {
                 </Link>
               </li>
             )}
-            {user.role === "user" && (
+            {user?.role === "user" && (
               <li>
                 <Link
                   href="/bookingstatus"
@@ -175,7 +175,7 @@ const MasterLayout = ({ children, session }) => {
                 </Link>
               </li>
             )}
-            {user.role === "admin" && (
+            {user?.role === "admin" && (
               <li>
                 <Link
                   href="/createslot"
@@ -186,7 +186,7 @@ const MasterLayout = ({ children, session }) => {
                 </Link>
               </li>
             )}
-            {user.role === "admin" && (
+            {user?.role === "admin" && (
               <li>
                 <Link
                   href="/timeslot"
@@ -197,7 +197,7 @@ const MasterLayout = ({ children, session }) => {
                 </Link>
               </li>
             )}
-            {user.role === "admin" && (
+            {user?.role === "admin" && (
               <li>
                 <Link
                   href="/bookingreq"
@@ -211,7 +211,7 @@ const MasterLayout = ({ children, session }) => {
                 </Link>
               </li>
             )}
-            {user.role === "admin" && (
+            {user?.role === "admin" && (
               <li>
                 <Link
                   href="/bookingcomplete"
@@ -225,7 +225,7 @@ const MasterLayout = ({ children, session }) => {
               </li>
             )}
 
-            {user.role === "admin" && (
+            {user?.role === "admin" && (
               <li>
                 <Link
                   href="/customers"
@@ -647,7 +647,7 @@ const MasterLayout = ({ children, session }) => {
                     data-bs-toggle="dropdown"
                   >
                     <img
-                      src={user.img || "/assets/images/user.png"}
+                      src={user?.img || "/assets/images/user.png"}
                       alt="image_user"
                       className="w-40-px h-40-px object-fit-cover rounded-circle"
                     />
@@ -656,10 +656,10 @@ const MasterLayout = ({ children, session }) => {
                     <div className="py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
                       <div>
                         <h6 className="text-lg capitalize text-primary-light fw-semibold mb-2">
-                          {user.name}
+                          {user?.name}
                         </h6>
                         <span className="capitalize text-secondary-light fw-medium text-sm">
-                          {user.role || "User"}
+                          {user?.role || "User"}
                         </span>
                       </div>
                       <button type="button" className="hover-text-danger">
@@ -673,7 +673,7 @@ const MasterLayout = ({ children, session }) => {
                       <li>
                         <Link
                           className="dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3"
-                          href={`/view-profile/${user.id}`}
+                          href={`/view-profile/${user?.id}`}
                         >
                           <Icon
                             icon="solar:user-linear"
